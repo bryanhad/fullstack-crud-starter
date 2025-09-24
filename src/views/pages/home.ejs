@@ -1,0 +1,14 @@
+<h1 class="mb-4 text-2xl font-bold">Welcome!</h1>
+<p>This is the homepage rendered inside the layout.</p>
+
+<div class="m-2 border p-2">
+   <button class="" hx-get="/message" hx-target="#result" hx-swap="innerHTML">
+      htmx call!
+      <span class="htmx-indicator">loading...</span>
+   </button>
+
+   <!-- The result will be inserted here -->
+   <div id="result" class="mt-4 border border-gray-300 p-4">
+      Result will appear here...
+   </div>
+</div>

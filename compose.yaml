@@ -1,0 +1,16 @@
+services:
+   app:
+      build: .
+      container_name: my-app
+      ports:
+         - "3000:3000"
+      volumes:
+         - sqlite_data:/app/data
+      env_file:
+         - .env
+      user: root # <-- temporarily root
+      command: sh -c "chown -R appuser:appuser /app/data && exec corepack pnpm start"
+      restart: unless-stopped
+
+volumes:
+   sqlite_data:
