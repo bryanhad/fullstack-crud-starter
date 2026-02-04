@@ -1,0 +1,12 @@
+{
+   "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "DigitalBrainstem.javascript-ejs-support",
+      "bradlc.vscode-tailwindcss",
+      "otovo-oss.htmx-tags",
+      "esbenp.prettier-vscode",
+      "BriteSnow.vscode-toggle-quotes",
+      "Cardinal90.multi-cursor-case-preserve"
+   ],
+   "unwantedRecommendations": ["sonarsource.sonarlint-vscode"]
+}

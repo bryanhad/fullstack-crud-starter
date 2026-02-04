@@ -1,8 +1,8 @@
 {
-   "name": "oinkie",
+   "name": "my-app",
    "version": "0.0.0",
-   "description": "oink oink!",
-   "main": "server.js",
+   "description": "This app is mine and for me only.",
+   "main": "src/server.ts",
    "scripts": {
       "fix": "eslint src --ext .ts,.tsx --fix && prettier --write .",
       "db:generate": "drizzle-kit generate",
@@ -10,7 +10,8 @@
       "db:studio": "drizzle-kit studio",
       "dev:server": "tsnd --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
       "dev:css": "tailwindcss -i ./src/main.css -o ./public/main.css --watch",
-      "dev": "concurrently \"pnpm dev:server\" \"pnpm dev:css\"",
+      "dev:client": "tsc --project tsconfig.client.json --watch",
+      "dev": "concurrently \"pnpm dev:server\" \"pnpm dev:css\" \"pnpm dev:client\"",
       "start": "node dist/server.js",
       "build": "bash scripts/build.sh",
       "test": "echo \"Error: no test specified\" && exit 1"

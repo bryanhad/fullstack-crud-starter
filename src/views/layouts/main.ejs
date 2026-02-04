@@ -2,17 +2,21 @@
 <html lang="en">
    <head>
       <meta charset="UTF-8" />
-      <title><%= title || "My App" %></title>
+      <title><%= PAGE_TITLE_SUFFIX %></title>
       <%- include("../partials/headAssets") %>
    </head>
    <link rel="stylesheet" href="/main.css" />
-   <body class="flex min-h-screen flex-col bg-gray-100 font-sans">
+   <body
+      hx-boost="true"
+      hx-target="#main"
+      class="flex min-h-screen flex-col bg-gray-100 font-sans"
+   >
       <!-- Navbar -->
       <%- include("../partials/navbar") %>
 
       <!-- Main content -->
-      <main class="mx-auto w-full max-w-[1400px] flex-[1] p-4 pb-8">
-         <%- include(content) %>
+      <main id="main" class="mx-auto w-full max-w-[1400px] flex-[1] p-4 pb-8">
+         <%- include(childHtmlPath) %>
       </main>
 
       <!-- Footer -->

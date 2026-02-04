@@ -1,4 +1,4 @@
-import { UserService } from "@/services/user.service";
+import * as userService from "@/services/user.service";
 import { createApiHandler } from "@/utils/api.util";
 import { NotFoundError } from "@/utils/error.util";
 import {
@@ -6,26 +6,24 @@ import {
    getUserByIdRequestSchema,
 } from "@/validation/user.validation";
 
-export class UserController {
-   public static readonly createUser = createApiHandler<typeof createUserRequestSchema>(
-      async (req) => {
-         await UserService.createUser(req.body);
-         return { message: "User created successfully." };
-      },
-   );
+export const createUser = createApiHandler<typeof createUserRequestSchema>(
+   async (req) => {
+      await userService.createUser(req.body);
+      return { message: "User created successfully." };
+   },
+);
 
-   public static readonly getUserById = createApiHandler<typeof getUserByIdRequestSchema>(
-      async (req) => {
-         const user = await UserService.getUserById(req.params.userId);
-         if (!user) {
-            throw new NotFoundError();
-         }
-         return { data: user };
-      },
-   );
+export const getUserById = createApiHandler<typeof getUserByIdRequestSchema>(
+   async (req) => {
+      const user = await userService.getUserById(req.params.userId);
+      if (!user) {
+         throw new NotFoundError();
+      }
+      return { data: user };
+   },
+);
 
-   public static readonly getUsers = createApiHandler(async () => {
-      const users = await UserService.getUsers();
-      return { data: users };
-   });
-}
+export const getUsers = createApiHandler(async () => {
+   const users = await userService.getUsers();
+   return { data: users };
+});

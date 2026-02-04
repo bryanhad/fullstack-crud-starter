@@ -18,7 +18,7 @@ type AsyncController<TSchema extends TRequestValidationSchema, TRes = unknown> =
  * Represents the shape of the wrapped Express handler.
  * It follows the usual (req, res, next) signature.
  */
-type ApiHandler<TSchema extends TRequestValidationSchema> = (
+export type ApiHandler<TSchema extends TRequestValidationSchema> = (
    req: ValidatedRequest<TSchema>,
    res: Response,
    next: NextFunction,
@@ -42,6 +42,45 @@ export function createApiHandler<
          res.status(200).json({
             message: message ?? "OK",
             ...(data ? { data } : {}),
+         });
+      } catch (err) {
+         next(err);
+      }
+   };
+}
+
+/**
+ * Creates an Express handler for server-rendered views.
+ *
+ * - renders a partial view for HTMX requests
+ * - renders the main layout for full page requests
+ * - supports sync or async data preparation
+ *
+ * @param childHtmlPath path to the child/partial view template
+ * @param renderDataFn function to prepare template data (HTMX-aware)
+ * @returns An Express-compatible view handler
+ */
+type RenderData = Record<string, unknown>;
+export function createViewHandler<TSchema extends TRequestValidationSchema>(
+   childHtmlPath: string,
+   renderDataFn: (
+      req: ValidatedRequest<TSchema>,
+      isHtmx: boolean,
+   ) => RenderData | Promise<RenderData>,
+): ApiHandler<TSchema> {
+   return async (req, res, next) => {
+      try {
+         const isHtmx = req.get("HX-Boosted") === "true";
+
+         const renderData = await renderDataFn(req, isHtmx);
+
+         if (isHtmx) {
+            return res.render(childHtmlPath, renderData);
+         }
+
+         return res.render("layouts/main", {
+            ...renderData,
+            childHtmlPath: `../${childHtmlPath}`,
          });
       } catch (err) {
          next(err);
