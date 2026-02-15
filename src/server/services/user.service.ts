@@ -1,7 +1,7 @@
 import { db } from "../db";
 import { usersTable } from "../db/schema/users.schema";
 import { User } from "../interfaces/user.interface";
-import { userValidation } from "../validation/user.validation";
+import { userValidation } from "../validations/user.validation";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
 

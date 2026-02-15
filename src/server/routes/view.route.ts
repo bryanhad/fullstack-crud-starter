@@ -1,4 +1,4 @@
-import {viewController } from "../controller/view.controller";
+import { viewController } from "../controllers/view.controller";
 import { Router } from "express";
 
 const viewRouter: Router = Router();
