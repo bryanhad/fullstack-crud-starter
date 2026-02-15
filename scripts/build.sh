@@ -1,30 +1,34 @@
-#!/bin/bash
+#!/bin/sh
 set -e  # exit on error
 
 echo "🚀 Starting build..."
 
-tailwind_input="src/main.css"
-tailwind_output="public/main.css"
+# --- paths ---
+TAILWIND_INPUT="src/client/css/main.css"
+PUBLIC_DIR="public"
+PUBLIC_CSS_FILE="$PUBLIC_DIR/main.css"
+PUBLIC_JS_DIR="$PUBLIC_DIR/js"
 
-public_js_dir="./public/js/"
+mkdir -p "$PUBLIC_DIR"
+mkdir -p "$PUBLIC_JS_DIR"
 
-# copy htmx
-mkdir -p public/js
-cp ./node_modules/htmx.org/dist/htmx.min.js "$public_js_dir"
-echo "✅ Copied htmx.min.js to public/js/"
-
-# build css
-# default tailwind log is on stderr, we redirect it to stdout (stderr will not be captured by bash!)
-# 1 = stdout
-# 2 = stderr
-tailwind_log=$(node_modules/.bin/tailwindcss -i "$tailwind_input" -o "$tailwind_output" --minify 2>&1) 
+# --- generate css ---
+tailwind_log=$(node_modules/.bin/tailwindcss -i "$TAILWIND_INPUT" -o "$PUBLIC_CSS_FILE" --minify 2>&1) 
 version=$(echo "$tailwind_log" | head -n1 | awk  '{print $2 " " $3}')
 time=$(echo "$tailwind_log" | grep "Done in" | awk '{print $3}')
-echo "✅ Tailwind CSS built to public/main.css ($version, $time)"
+echo "✅ CSS generated to $PUBLIC_CSS_FILE ($version, $time)"
 
-# build js
-node_modules/.bin/tsc
-node_modules/.bin/tsc-alias
-echo "✅ TypeScript compiled"
+
+# --- compile stuff ---
+node_modules/.bin/tsc -b --clean 
+# server stuff
+node_modules/.bin/tsc --project tsconfig.server.json # compile ts
+echo "✅ server code compiled to dist/"
+# client stuff
+node_modules/.bin/tsc --project tsconfig.client.json # compile ts
+cp ./node_modules/htmx.org/dist/htmx.min.js "$PUBLIC_JS_DIR" # htmx js -> PUBLIC_JS_DIR
+find "$PUBLIC_JS_DIR" -name "*.d.ts" -type f -exec rm -f {} + # remove any generated .d.ts files within PUBLIC_JS_DIR
+echo "✅ client code compiled to $PUBLIC_JS_DIR/"
+
 
 echo "🎉 Build complete!"

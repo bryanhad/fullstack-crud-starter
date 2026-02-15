@@ -1,0 +1,6 @@
+{
+   "exec": "node --env-file=.env --import tsx src/server/server.ts",
+   "watch": ["src/server"],
+   "ext": "ts",
+   "quiet": true
+}
