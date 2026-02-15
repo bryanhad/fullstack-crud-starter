@@ -18,17 +18,18 @@ version=$(echo "$tailwind_log" | head -n1 | awk  '{print $2 " " $3}')
 time=$(echo "$tailwind_log" | grep "Done in" | awk '{print $3}')
 echo "✅ CSS generated to $PUBLIC_CSS_FILE ($version, $time)"
 
-
-# --- compile stuff ---
+# clean typescript compiler.. default to compile every build run!
 node_modules/.bin/tsc -b --clean 
-# server stuff
+# --- compile server ---
 node_modules/.bin/tsc --project tsconfig.server.json # compile ts
 echo "✅ server code compiled to dist/"
-# client stuff
-node_modules/.bin/tsc --project tsconfig.client.json # compile ts
-cp ./node_modules/htmx.org/dist/htmx.min.js "$PUBLIC_JS_DIR" # htmx js -> PUBLIC_JS_DIR
-find "$PUBLIC_JS_DIR" -name "*.d.ts" -type f -exec rm -f {} + # remove any generated .d.ts files within PUBLIC_JS_DIR
-echo "✅ client code compiled to $PUBLIC_JS_DIR/"
 
+# --- compile client ---
+node_modules/.bin/vite build
+echo "✅ client assets built with Vite. Compiled to $PUBLIC_JS_DIR/"
+
+# --- copy htmx ---
+cp ./node_modules/htmx.org/dist/htmx.min.js "$PUBLIC_JS_DIR" # htmx js -> PUBLIC_JS_DIR
+echo "✅ copied htmx.min.js to $PUBLIC_JS_DIR/"
 
 echo "🎉 Build complete!"
