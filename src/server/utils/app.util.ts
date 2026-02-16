@@ -2,17 +2,23 @@ import express, { Application } from "express";
 import path from "path";
 import { env } from "./env.util";
 
-export function viewRouterBootstrap(app: Application) {
-   // mount vendor assets
-   app.use("/vendor/htmx", express.static(path.resolve("node_modules/htmx.org/dist")));
+export function mountViewRouterAssets(app: Application) {
+   // serve public dir
+   app.use(express.static(path.join(process.cwd(), "public")));
 
-   // mount locals (global vars for ejs)
-   app.locals.clientEntry = (entryName: string) => {
-      const src =
-         env.NODE_ENV === "development"
-            ? `${env.VITE_DEV_SERVER}/ts/${entryName}.ts`
-            : `/js/${entryName}.js`;
-
-      return `<script type="module" src="${src}"></script>`;
+   // serve vendor assets
+   app.locals.vendorAssets = {
+      htmx: "/vendor/htmx",
    };
+   app.use(
+      app.locals.vendorAssets.htmx,
+      express.static(path.resolve("node_modules/htmx.org/dist")),
+   );
+
+   // dynamically set client scripts where-abouts
+   if (env.NODE_ENV === "production") {
+      app.locals.clientScripts = `/js/index.js`;
+   } else {
+      app.locals.clientScripts = `${env.VITE_DEV_SERVER}/ts/index.ts`;
+   }
 }

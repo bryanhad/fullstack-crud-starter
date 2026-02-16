@@ -1,6 +1,6 @@
 import { createViewHandler } from "../utils/api.util";
 
-const PAGE_TITLE_SUFFIX = "| Hellow!";
+const PAGE_TITLE_SUFFIX = "| myCoolApp";
 
 export const viewController = {
    handleHomePage: createViewHandler("pages/home", () => ({

@@ -1,14 +1,11 @@
 import express, { Application } from "express";
-import path from "path";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
 import { apiRouter } from "./routes/api.route";
 import { viewRouter } from "./routes/view.route";
-import { viewRouterBootstrap } from "./utils/app.util";
+import { mountViewRouterAssets } from "./utils/app.util";
+import path from "path";
 
 const app: Application = express();
-
-// serve static files
-app.use(express.static(path.join(process.cwd(), "public")));
 
 // set templating engine
 app.set("view engine", "ejs");
@@ -20,8 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // mount routers
 app.use("/api", apiRouter);
-
-viewRouterBootstrap(app);
+mountViewRouterAssets(app);
 app.use("/", viewRouter);
 
 app.use(errorHandler);
