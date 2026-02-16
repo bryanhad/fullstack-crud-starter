@@ -1,4 +1,5 @@
 # SKD Mobile Gudang — Functional Breakdown
+
 ## Overview
 
 SKD Mobile Gudang is a mobile web application designed to support warehouse operations by integrating with Microsoft Dynamics NAV via web services.
@@ -14,10 +15,11 @@ The system is optimized for mobile browser usage.
 - **ERP Integration** - Microsoft Dynamics NAV Web Services
 
 - **Communication Pattern**
-    - Client -> Mid App -> NAV
-    - NAV -> Mid App -> Client
+   - Client -> Mid App -> NAV
+   - NAV -> Mid App -> Client
 
 **The Mid App handles:**
+
 - Authentication proxying
 - Web service calls to NAV
 - Configuration management
@@ -25,163 +27,130 @@ The system is optimized for mobile browser usage.
 
 ## Core Functional Modules
 
-### 1. Authentication Module
-Login Page
+### 🔐 Authentication Flow
 
-**Flow:**
+1. User inputs Username + Password
+2. Mid App calls NAV Login Web Service
+3. NAV returns:
+   - Login status (Valid / Invalid)
+   - Location Code (if valid)
 
-    1. User inputs:
-        - Username
-        - Password
-    2. Mid App calls NAV Login Web Service
-    3. NAV returns:
-        - Login status (Valid / Invalid)
-        - Location Code (if valid)
+- If invalid → Show error message
+- If valid:
+   - Store Location Code in session
+   - Redirect to Menu page
 
-**Behavior:**
+### ⚙️ Settings Page
 
-    - If invalid → Show error message
-    - If valid:
-        - Store Location Code in session
-        - Redirect to Menu page
-
-### 2. Settings Module
-
-**Setting Page**
-
-    Allows configuration of:
-    - NAV Web Service URL
+- Allows configuration of:
+    - NAV URL
     - Mid App credentials (if applicable)
+- Save & Back
 
-**Actions:**
+Mostly admin config stuff (ERP connection config)
 
-    - Save
-    - Back
-
-**Purpose:**
-
-    - Environment configuration
-    - ERP connection configuration
-
-### 3. Menu Module
+### 📃 Menu Page
 
 After successful login, user sees:
 
-    - Stock Count
-    - Gudang Receive
-    - Cek Stock
-    - Logout
+- Stock Count
+- Gudang Receive
+- Cek Stock
+- Logout
 
 Logout clears session and returns to Login page.
 
-## Transaction Modules
+## Core Features
 
-### 4. Stock Count Module
+### 📦 A. Stock Count Module
 
-Used for physical inventory counting.
+Used for physical inventory counting. (stock counting)
 
 **Step 1 — Load Stock Count Documents**
 
-    - Call NAV Web Service:
-        - Filter: Location Code = User’s Location
-        - Only Released documents
-    - Display returned document numbers in dropdown
-    - User selects one
-    - Click START
-    - Navigate to Stock Count Detail page
+- Fetch list of Released Stock Count documents filtered by LOCATION
+- Show dropdown list
+- User selects one → START
+- Go to Stock Count Detail page
 
 **Step 2 — Stock Count Detail**
 
-    User must choose:
-    - Barcode Mode = ON
-    - Barcode Mode = OFF
+Consists of 2 modes, user must choose:
+- Barcode Mode = **ON**
+- Barcode Mode = **OFF**
 
-**Barcode Mode: ON (Scan-Optimized Mode)**
+**✅ Barcode Mode: ON (Scan-Optimized Mode)**
 
-Designed for fast repetitive scanning.
+Optimized for scanning.
 
-    **Rules**
-    - Only Barcode input field enabled
-    - User scans barcode
-    - Mid App calls NAV to resolve Item from Barcode
+**Rules**
+- Only Barcode input field enabled
+- User scans barcode
+- Mid App calls NAV to resolve Item from Barcode (check exists or not)
 
-    If valid:
-    - Quantity = 1
-    - NAV returns Base UOM
-    
-    If same barcode scanned again:
-    - Do NOT call NAV again
-    - Increment Quantity by 1
+If valid:
+- Quantity = 1
+- NAV returns Base UOM
 
-    If different barcode scanned:
-    - Show confirmation popup
-    - If confirmed:
-        - Call NAV for new barcode
-        - Reset Quantity = 1
+If same barcode scanned again:
+- Do NOT call NAV again
+- Increment Quantity by 1
 
-    _User must click POST to send transaction to NAV._
-    
-    _NAV updates Stock Count quantity accordingly._
+If different barcode scanned:
+- Show confirmation popup
+- If confirmed:
+    - Call NAV for new barcode
+    - Reset Quantity = 1
 
-**Barcode Mode: OFF (Manual Mode)**
+⚠️ User must click POST to send new item detail (quantity) to NAV. Then, NAV updates Stock Count quantity accordingly.
+
+**❌ Barcode Mode: OFF (Manual Mode)**
 
 All input fields enabled.
 
-    User can:
-
+- User can:
     - Select Item manually
     - Scan Barcode
-    - Input Quantity manually
-    - Select UOM
+- User manually inputs:
+    - Quantity
+    - UOM
 
-    Flow:
+Flow:
 
-    - Item / Barcode selected
-    - Mid App calls NAV to resolve item
-    - User inputs Quantity and UOM
-    - Click POST
-    - NAV updates Stock Count
+- Item / Barcode selected
+- Mid App calls NAV to resolve item
+- User inputs manually (Quantity and UOM)
+- Click POST
+- NAV updates item detail
 
-### 5. Gudang Receive Module
+### 📩 B. Gudang Receive Module
 
 Used for receiving goods against Purchase Orders.
 
 Flow is structurally identical to Stock Count.
 
-**Step 1 — Load PO List**
-
-    - Call NAV Web Service:
-        - Filter: Location Code
-        - Only Released PO
-    - Display PO numbers in dropdown
-    - User selects PO
-    - Click START
-
-**Step 2 — Gudang Receive Detail**
-
-    Supports:
-    - Barcode Mode ON
-    - Barcode Mode OFF
-
-    Logic identical to Stock Count.
-
-    Difference:
+- Call NAV Web Service:
+    - Filter: Location Code
+    - Get Released PO List
+- Display PO numbers in dropdown
+- User selects PO
+- Click START
+- Consists of 2 modes, Barcode Mode ON/OFF (logic identical to 📦 stock count)
+- Difference:
     - POST updates "Quantity to Receive" in NAV.
-    
-### 6. Cek Stock Module
 
-Read-only stock inquiry feature.
+### 🔎 Cek Stock Module
 
-**Flow:**
+Read-only stock inquiry feature. (simple)
 
-    1. User inputs Item or scans Barcode
-    2. Mid App calls NAV
-    3. NAV returns:
-        - Inventory
-        - Qty Sold Not Posted
-    4. Display computed stock information
+1. User inputs Item or scans Barcode
+2. Mid App calls NAV
+3. NAV returns:
+    - Inventory
+    - Qty Sold Not Posted
+4. Display stock information
 
-_No transaction posting involved._
+_No transaction posting involved. Basically a read-only_
 
 ## Barcode Mode Behavior Summary
 
@@ -202,16 +171,31 @@ Key design principles:
 
 This application should be:
 
-- Mobile-first
-- Minimal UI
-- Large touch targets
-- Fast response time
+- Mobile-first ⚠️
+- Minimal UI ⚠️
+- Large touch targets ⚠️
+- Fast response time ⚠️
 - Scan-focused
 - Low animation / no heavy UI transitions
 
 Primary goal:
 
     Speed, accuracy, and operational efficiency.
+
+## Menu
+
+Big buttons:
+    
+    [ 📦 Stock Count ]
+
+    [ 📥 Gudang Receive ]
+
+    [ 🔍 Cek Stock ]
+
+    [ 🚪 Logout ]
+
+Large, finger-friendly, simple.
+
 
 ## Non-Functional Requirements (Implied)
 
@@ -253,5 +237,5 @@ pnpm build
 pnpm dev
 ```
 
-Visit http://localhost:*APP_PORT_FROM_DOT_ENV*
+Visit http://localhost:_APP_PORT_FROM_DOT_ENV_
 after starting the server.
