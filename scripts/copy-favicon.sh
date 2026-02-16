@@ -5,13 +5,13 @@ DEST="public/favicon.ico"
 
 # Check if source exists
 if [ ! -f "$SRC" ]; then
-  echo "⚠️ No favicon.ico found at $SRC, skipping copy."
+  echo "⚠️ no favicon.ico found at $SRC, skipping copy."
   exit 0
 fi
 
 # Check if destination already exists
 if [ -f "$DEST" ]; then
-  echo "✅ Favicon already in public"
+  echo "✅ favicon already exist in $DEST"
   exit 0
 fi
 
@@ -20,4 +20,4 @@ mkdir -p "public"
 
 # Copy the file
 cp "$SRC" "$DEST"
-echo "✅ Copied favicon.ico to $DEST"
+echo "✅ copied favicon.ico to $DEST"

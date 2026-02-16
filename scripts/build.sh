@@ -4,6 +4,7 @@ set -e  # exit on error
 echo "🚀 Starting build..."
 
 # --- paths ---
+SCRIPTS_DIR="$(cd "$(dirname "$0")" && pwd)"
 TAILWIND_INPUT="src/client/css/main.css"
 PUBLIC_DIR="public"
 PUBLIC_CSS_FILE="$PUBLIC_DIR/main.css"
@@ -31,5 +32,8 @@ echo "✅ client assets built with Vite. Compiled to $PUBLIC_JS_DIR/"
 # --- copy htmx ---
 cp ./node_modules/htmx.org/dist/htmx.min.js "$PUBLIC_JS_DIR" # htmx js -> PUBLIC_JS_DIR
 echo "✅ copied htmx.min.js to $PUBLIC_JS_DIR/"
+
+# --- copy favicon ---
+$SCRIPTS_DIR/copy-favicon.sh
 
 echo "🎉 Build complete!"
