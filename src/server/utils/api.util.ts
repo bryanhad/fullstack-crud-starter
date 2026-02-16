@@ -1,3 +1,4 @@
+import { VIEW_PAGE_TITLE_SUFFIX } from "../controllers/view.controller";
 import {
    RequestValidationSchema,
    ValidatedRequest,
@@ -60,18 +61,22 @@ export function createApiHandler<TSchema extends RequestValidationSchema, TRes =
  * @returns An Express-compatible view handler
  */
 type RenderData = Record<string, unknown>;
-export function createViewHandler<TSchema extends RequestValidationSchema>(
+export function createViewHandler<
+   TSchema extends RequestValidationSchema,
+   TRenderData extends RenderData & { title: string; data?: Record<string, unknown> },
+>(
    childHtmlPath: string,
    renderDataFn: (
       req: ValidatedRequest<TSchema>,
       isHtmx: boolean,
-   ) => RenderData | Promise<RenderData>,
+   ) => TRenderData | Promise<TRenderData>,
 ): ApiHandler<TSchema> {
    return async (req, res, next) => {
       try {
          const isHtmx = req.get("HX-Boosted") === "true";
 
          const renderData = await renderDataFn(req, isHtmx);
+         renderData.title += VIEW_PAGE_TITLE_SUFFIX;
 
          if (isHtmx) {
             return res.render(childHtmlPath, renderData);

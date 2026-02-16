@@ -1,14 +1,13 @@
+// since compilation of client ts is handled by vite,
+// this tsconfig file is now just for IDE typing..
 {
    "extends": "./tsconfig.json",
    "compilerOptions": {
+      "moduleResolution": "node",
       "rootDir": "src/client/ts",
-      "outDir": "public/js",
-
-      "module": "ES2020",
       "target": "ES2020",
       "lib": ["DOM", "DOM.Iterable", "ES2020"],
       "types": [],
-      "composite": true
    },
    "include": ["src/client/ts/**/*.ts"]
 }

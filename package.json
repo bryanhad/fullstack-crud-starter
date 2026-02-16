@@ -1,16 +1,17 @@
 {
-   "name": "my-app",
+   "name": "litera-mobile-gudang-app",
    "version": "0.0.0",
-   "description": "This app is mine and for me only.",
-   "main": "src/server.ts",
+   "description": "A mobile web app acting as a middleware between users and Microsoft Dynamics NAV.`",
+   "main": "src/server/server.ts",
    "scripts": {
       "fix": "eslint src --ext .ts,.tsx --fix && prettier --write .",
       "db:generate": "drizzle-kit generate",
       "db:migrate": "mkdir -p data && drizzle-kit migrate",
       "db:studio": "drizzle-kit studio",
+      "predev:server": "scripts/copy-favicon.sh",
       "dev:server": "nodemon",
       "dev:css": "tailwindcss -i ./src/client/css/main.css -o ./public/main.css --watch",
-      "dev:client": "tsc -p tsconfig.client.json --watch",
+      "dev:client": "vite",
       "dev": "concurrently \"pnpm dev:server\" \"pnpm dev:css\" \"pnpm dev:client\"",
       "start": "cross-env PORT=5000 DB_FILE_NAME=test.db node dist/server.js",
       "build": "scripts/build.sh",
@@ -21,6 +22,7 @@
    "license": "ISC",
    "packageManager": "pnpm@10.15.1",
    "dependencies": {
+      "@zxing/browser": "^0.1.5",
       "drizzle-orm": "0.44.5",
       "drizzle-zod": "0.8.3",
       "ejs": "^3.1.10",
@@ -53,6 +55,7 @@
       "ts-jest": "29.4.1",
       "tsx": "^4.21.0",
       "typescript": "5.9.2",
-      "typescript-eslint": "8.43.0"
+      "typescript-eslint": "8.43.0",
+      "vite": "^7.3.1"
    }
 }

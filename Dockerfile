@@ -25,7 +25,7 @@ WORKDIR /app
 # Copy only what we need from build stage
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/views ./views
+COPY --from=build /app/src/server/views ./dist/views
 COPY --from=build /app/public ./public
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/drizzle.config.ts ./drizzle.config.ts
