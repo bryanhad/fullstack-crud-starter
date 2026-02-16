@@ -1,4 +1,4 @@
-# SKD Mobile Gudang — Functional Breakdown
+# SKD Mobile Gudang
 
 ## Overview
 
@@ -43,8 +43,8 @@ The system is optimized for mobile browser usage.
 ### ⚙️ Settings Page
 
 - Allows configuration of:
-    - NAV URL
-    - Mid App credentials (if applicable)
+   - NAV URL
+   - Mid App credentials (if applicable)
 - Save & Back
 
 Mostly admin config stuff (ERP connection config)
@@ -76,6 +76,7 @@ Used for physical inventory counting. (stock counting)
 **Step 2 — Stock Count Detail**
 
 Consists of 2 modes, user must choose:
+
 - Barcode Mode = **ON**
 - Barcode Mode = **OFF**
 
@@ -84,23 +85,27 @@ Consists of 2 modes, user must choose:
 Optimized for scanning.
 
 **Rules**
+
 - Only Barcode input field enabled
 - User scans barcode
 - Mid App calls NAV to resolve Item from Barcode (check exists or not)
 
 If valid:
+
 - Quantity = 1
 - NAV returns Base UOM
 
 If same barcode scanned again:
+
 - Do NOT call NAV again
 - Increment Quantity by 1
 
 If different barcode scanned:
+
 - Show confirmation popup
 - If confirmed:
-    - Call NAV for new barcode
-    - Reset Quantity = 1
+   - Call NAV for new barcode
+   - Reset Quantity = 1
 
 ⚠️ User must click POST to send new item detail (quantity) to NAV. Then, NAV updates Stock Count quantity accordingly.
 
@@ -109,11 +114,11 @@ If different barcode scanned:
 All input fields enabled.
 
 - User can:
-    - Select Item manually
-    - Scan Barcode
+   - Select Item manually
+   - Scan Barcode
 - User manually inputs:
-    - Quantity
-    - UOM
+   - Quantity
+   - UOM
 
 Flow:
 
@@ -130,14 +135,14 @@ Used for receiving goods against Purchase Orders.
 Flow is structurally identical to Stock Count.
 
 - Call NAV Web Service:
-    - Filter: Location Code
-    - Get Released PO List
+   - Filter: Location Code
+   - Get Released PO List
 - Display PO numbers in dropdown
 - User selects PO
 - Click START
 - Consists of 2 modes, Barcode Mode ON/OFF (logic identical to 📦 stock count)
 - Difference:
-    - POST updates "Quantity to Receive" in NAV.
+   - POST updates "Quantity to Receive" in NAV.
 
 ### 🔎 Cek Stock Module
 
@@ -146,8 +151,8 @@ Read-only stock inquiry feature. (simple)
 1. User inputs Item or scans Barcode
 2. Mid App calls NAV
 3. NAV returns:
-    - Inventory
-    - Qty Sold Not Posted
+   - Inventory
+   - Qty Sold Not Posted
 4. Display stock information
 
 _No transaction posting involved. Basically a read-only_
@@ -185,7 +190,7 @@ Primary goal:
 ## Menu
 
 Big buttons:
-    
+
     [ 📦 Stock Count ]
 
     [ 📥 Gudang Receive ]
@@ -195,7 +200,6 @@ Big buttons:
     [ 🚪 Logout ]
 
 Large, finger-friendly, simple.
-
 
 ## Non-Functional Requirements (Implied)
 
@@ -220,22 +224,65 @@ The application prioritizes operational efficiency over visual complexity.
 
 ## Getting Started
 
+### Prerequisites
+- Node.js (>= 20)
+- pnpm
+    - can be installed by running `npm i -g pnpm`
+- Docker (for production)
+
+
+### Setup
+1. Setup environment variables:
+    - Open .env.example
+    - Copy corresponding section:
+        - DEVELOPMENT -> .env.dev
+        - PRODUCTION -> .env
+
+2. Install dependencies:
+    ```
+    pnpm i
+    ```
+
+
+### Development
+Run the app in dev mode:
 ```sh
-# Install dependencies
-pnpm install
-
-# Generate SQL migrations
-pnpm db:generate
-
-# Run database migrations
-pnpm db:migrate
-
-# Build (compile TypeScript & Tailwind)
-pnpm build
-
-# Run development
 pnpm dev
 ```
+Populate the database:
+```sh
+# generate migrations
+pnpm db:generate
+# run migrations
+pnpm db:migrate
+```
+Visit: http://localhost:3000 (or the port set in .env)
 
-Visit http://localhost:_APP_PORT_FROM_DOT_ENV_
-after starting the server.
+
+### Production (Docker)
+Build and run the app in production mode:
+```sh
+docker compose build
+docker compose up
+```
+
+Populate the database inside the running container:
+
+1. Get the container ID:
+    ```
+    docker ps
+    ```
+    - Copy the first few characters of your app container’s ID (ex: 86f)
+
+2. Access the container terminal:
+    ```
+    docker exec -it [container_id] sh
+    ```
+    - Ex: docker exec -it 86f sh
+    - You should see a prompt like `/app #`
+
+3. Generate and run migrations:
+    ```
+    npm run db:generate
+    npm run db:migrate
+    ```

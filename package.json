@@ -6,7 +6,7 @@
    "scripts": {
       "fix": "eslint src --ext .ts,.tsx --fix && prettier --write .",
       "db:generate": "drizzle-kit generate",
-      "db:migrate": "mkdir -p data && drizzle-kit migrate",
+      "db:migrate": "drizzle-kit migrate",
       "db:studio": "drizzle-kit studio",
       "predev:server": "scripts/copy-favicon.sh",
       "dev:server": "nodemon",
