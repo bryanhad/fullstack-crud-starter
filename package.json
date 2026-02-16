@@ -1,7 +1,7 @@
 {
-   "name": "my-app",
+   "name": "litera-mobile-gudang-app",
    "version": "0.0.0",
-   "description": "This app is mine and for me only.",
+   "description": "A mobile web app acting as a middleware between users and Microsoft Dynamics NAV.`",
    "main": "src/server/server.ts",
    "scripts": {
       "fix": "eslint src --ext .ts,.tsx --fix && prettier --write .",
@@ -22,6 +22,7 @@
    "license": "ISC",
    "packageManager": "pnpm@10.15.1",
    "dependencies": {
+      "@zxing/browser": "^0.1.5",
       "drizzle-orm": "0.44.5",
       "drizzle-zod": "0.8.3",
       "ejs": "^3.1.10",

@@ -1,7 +1,7 @@
 import { userService } from "../services/user.service";
 import { createApiHandler } from "../utils/api.util";
 import { NotFoundError } from "../utils/error.util";
-import { userValidation } from "../validation/user.validation";
+import { userValidation } from "../validations/user.validation";
 
 export const userController = {
    createUser: createApiHandler<typeof userValidation.createUserRequest>(async (req) => {
